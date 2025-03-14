@@ -1,0 +1,395 @@
+import type {
+  Agent,
+  Evaluateur,
+  CritereEvaluation,
+  Evaluation,
+  StatistiquesSection,
+  StatistiquesAgent,
+} from "@/types/evaluation"
+
+// Agents fictifs
+export const agents: Agent[] = [
+  {
+    id: "A001",
+    nom: "Dupont",
+    prenom: "Jean",
+    matricule: "GP12345",
+    equipe: "Équipe A",
+    poste: "Agent de sécurité",
+    dateEntree: "2020-05-15",
+  },
+  {
+    id: "A002",
+    nom: "Martin",
+    prenom: "Sophie",
+    matricule: "GP12346",
+    equipe: "Équipe B",
+    poste: "Agent de sécurité",
+    dateEntree: "2019-11-03",
+  },
+  {
+    id: "A003",
+    nom: "Petit",
+    prenom: "Thomas",
+    matricule: "GP12347",
+    equipe: "Équipe A",
+    poste: "Chef d'équipe",
+    dateEntree: "2018-07-22",
+  },
+  {
+    id: "A004",
+    nom: "Dubois",
+    prenom: "Marie",
+    matricule: "GP12348",
+    equipe: "Équipe C",
+    poste: "Agent de sécurité",
+    dateEntree: "2021-02-10",
+  },
+  {
+    id: "A005",
+    nom: "Leroy",
+    prenom: "Lucas",
+    matricule: "GP12349",
+    equipe: "Équipe B",
+    poste: "Agent de sécurité",
+    dateEntree: "2020-09-18",
+  },
+]
+
+// Évaluateurs fictifs
+export const evaluateurs: Evaluateur[] = [
+  {
+    id: "E001",
+    nom: "Bernard",
+    prenom: "Philippe",
+    fonction: "Responsable de secteur",
+  },
+  {
+    id: "E002",
+    nom: "Moreau",
+    prenom: "Claire",
+    fonction: "Responsable de formation",
+  },
+  {
+    id: "E003",
+    nom: "Girard",
+    prenom: "Antoine",
+    fonction: "Directeur opérationnel",
+  },
+]
+
+// Critères d'évaluation par section
+export const criteres: CritereEvaluation[] = [
+  // Section 1: Compétences techniques
+  {
+    id: "C001",
+    section: 1,
+    libelle: "Connaissance des procédures de sécurité",
+    description: "Maîtrise des procédures standard et d'urgence",
+    poids: 3,
+  },
+  {
+    id: "C002",
+    section: 1,
+    libelle: "Utilisation des équipements",
+    description: "Capacité à utiliser correctement les équipements de sécurité",
+    poids: 2,
+  },
+  {
+    id: "C003",
+    section: 1,
+    libelle: "Rédaction des rapports",
+    description: "Qualité et précision des rapports d'intervention",
+    poids: 2,
+  },
+
+  // Section 2: Compétences comportementales
+  {
+    id: "C004",
+    section: 2,
+    libelle: "Communication",
+    description: "Clarté et efficacité de la communication",
+    poids: 3,
+  },
+  {
+    id: "C005",
+    section: 2,
+    libelle: "Gestion du stress",
+    description: "Capacité à rester calme sous pression",
+    poids: 3,
+  },
+  {
+    id: "C006",
+    section: 2,
+    libelle: "Travail d'équipe",
+    description: "Collaboration et soutien aux collègues",
+    poids: 2,
+  },
+
+  // Section 3: Performance opérationnelle
+  {
+    id: "C007",
+    section: 3,
+    libelle: "Réactivité",
+    description: "Rapidité et pertinence des interventions",
+    poids: 3,
+  },
+  {
+    id: "C008",
+    section: 3,
+    libelle: "Prise de décision",
+    description: "Capacité à prendre des décisions adaptées",
+    poids: 3,
+  },
+  {
+    id: "C009",
+    section: 3,
+    libelle: "Résolution de problèmes",
+    description: "Efficacité dans la résolution des situations complexes",
+    poids: 2,
+  },
+
+  // Section 4: Attitude professionnelle
+  {
+    id: "C010",
+    section: 4,
+    libelle: "Ponctualité",
+    description: "Respect des horaires et de la planification",
+    poids: 2,
+  },
+  {
+    id: "C011",
+    section: 4,
+    libelle: "Présentation",
+    description: "Tenue et apparence professionnelle",
+    poids: 1,
+  },
+  {
+    id: "C012",
+    section: 4,
+    libelle: "Respect des valeurs",
+    description: "Adhésion aux valeurs et à l'éthique de l'organisation",
+    poids: 3,
+  },
+]
+
+// Évaluations fictives
+export const evaluations: Evaluation[] = [
+  {
+    id: "EV001",
+    agentId: "A001",
+    evaluateurId: "E001",
+    date: "2023-10-15",
+    notes: [
+      { critereId: "C001", note: 4, commentaire: "Bonne maîtrise des procédures" },
+      { critereId: "C002", note: 3, commentaire: "Utilisation correcte mais perfectible" },
+      { critereId: "C003", note: 4, commentaire: "Rapports clairs et précis" },
+      { critereId: "C004", note: 5, commentaire: "Excellente communication" },
+      { critereId: "C005", note: 4, commentaire: "Bonne gestion du stress" },
+      { critereId: "C006", note: 5, commentaire: "Très bon esprit d'équipe" },
+      { critereId: "C007", note: 4, commentaire: "Bonne réactivité" },
+      { critereId: "C008", note: 3, commentaire: "Décisions généralement adaptées" },
+      { critereId: "C009", note: 4, commentaire: "Résout efficacement les problèmes" },
+      { critereId: "C010", note: 5, commentaire: "Toujours ponctuel" },
+      { critereId: "C011", note: 5, commentaire: "Présentation impeccable" },
+      { critereId: "C012", note: 4, commentaire: "Respecte les valeurs de l'organisation" },
+    ],
+    commentaireGeneral: "Agent très compétent et impliqué.",
+    status: "completee",
+  },
+  {
+    id: "EV002",
+    agentId: "A002",
+    evaluateurId: "E002",
+    date: "2023-10-18",
+    notes: [
+      { critereId: "C001", note: 3, commentaire: "Connaissances à renforcer" },
+      { critereId: "C002", note: 4, commentaire: "Bonne utilisation des équipements" },
+      { critereId: "C003", note: 3, commentaire: "Rapports parfois incomplets" },
+      { critereId: "C004", note: 4, commentaire: "Communication claire" },
+      { critereId: "C005", note: 3, commentaire: "Gestion du stress à améliorer" },
+      { critereId: "C006", note: 4, commentaire: "Bon travail d'équipe" },
+      { critereId: "C007", note: 3, commentaire: "Réactivité moyenne" },
+      { critereId: "C008", note: 3, commentaire: "Prise de décision à développer" },
+      { critereId: "C009", note: 4, commentaire: "Bonne résolution de problèmes" },
+      { critereId: "C010", note: 4, commentaire: "Généralement ponctuel" },
+      { critereId: "C011", note: 4, commentaire: "Bonne présentation" },
+      { critereId: "C012", note: 4, commentaire: "Respect des valeurs" },
+    ],
+    commentaireGeneral: "Agent motivé avec des points à améliorer.",
+    status: "completee",
+  },
+  {
+    id: "EV003",
+    agentId: "A003",
+    evaluateurId: "E001",
+    date: "2023-10-20",
+    notes: [
+      { critereId: "C001", note: 5, commentaire: "Excellente maîtrise des procédures" },
+      { critereId: "C002", note: 5, commentaire: "Utilisation experte des équipements" },
+      { critereId: "C003", note: 4, commentaire: "Rapports de qualité" },
+      { critereId: "C004", note: 5, commentaire: "Communication exemplaire" },
+      { critereId: "C005", note: 5, commentaire: "Excellente gestion du stress" },
+      { critereId: "C006", note: 5, commentaire: "Leadership dans l'équipe" },
+      { critereId: "C007", note: 5, commentaire: "Très réactif" },
+      { critereId: "C008", note: 5, commentaire: "Décisions toujours pertinentes" },
+      { critereId: "C009", note: 5, commentaire: "Résolution efficace des problèmes" },
+      { critereId: "C010", note: 4, commentaire: "Ponctuel" },
+      { critereId: "C011", note: 5, commentaire: "Présentation exemplaire" },
+      { critereId: "C012", note: 5, commentaire: "Incarne les valeurs de l'organisation" },
+    ],
+    commentaireGeneral: "Chef d'équipe exemplaire, très apprécié par ses collègues.",
+    status: "completee",
+  },
+  {
+    id: "EV004",
+    agentId: "A004",
+    evaluateurId: "E003",
+    date: "2023-10-22",
+    notes: [
+      { critereId: "C001", note: 2, commentaire: "Connaissances insuffisantes" },
+      { critereId: "C002", note: 3, commentaire: "Utilisation correcte mais hésitante" },
+      { critereId: "C003", note: 2, commentaire: "Rapports souvent incomplets" },
+      { critereId: "C004", note: 3, commentaire: "Communication à améliorer" },
+      { critereId: "C005", note: 2, commentaire: "Difficulté à gérer le stress" },
+      { critereId: "C006", note: 3, commentaire: "Travail d'équipe correct" },
+      { critereId: "C007", note: 2, commentaire: "Manque de réactivité" },
+      { critereId: "C008", note: 2, commentaire: "Difficulté à prendre des décisions" },
+      { critereId: "C009", note: 3, commentaire: "Résolution de problèmes à développer" },
+      { critereId: "C010", note: 4, commentaire: "Ponctuel" },
+      { critereId: "C011", note: 4, commentaire: "Bonne présentation" },
+      { critereId: "C012", note: 3, commentaire: "Respect des valeurs à renforcer" },
+    ],
+    commentaireGeneral: "Agent récemment recruté, nécessite un accompagnement.",
+    status: "completee",
+  },
+  {
+    id: "EV005",
+    agentId: "A005",
+    evaluateurId: "E002",
+    date: "2023-10-25",
+    notes: [
+      { critereId: "C001", note: 4, commentaire: "Bonne connaissance des procédures" },
+      { critereId: "C002", note: 4, commentaire: "Bonne utilisation des équipements" },
+      { critereId: "C003", note: 3, commentaire: "Rapports corrects" },
+      { critereId: "C004", note: 3, commentaire: "Communication satisfaisante" },
+      { critereId: "C005", note: 4, commentaire: "Bonne gestion du stress" },
+      { critereId: "C006", note: 4, commentaire: "Bon travail d'équipe" },
+      { critereId: "C007", note: 4, commentaire: "Bonne réactivité" },
+      { critereId: "C008", note: 3, commentaire: "Prise de décision correcte" },
+      { critereId: "C009", note: 3, commentaire: "Résolution de problèmes satisfaisante" },
+      { critereId: "C010", note: 5, commentaire: "Très ponctuel" },
+      { critereId: "C011", note: 4, commentaire: "Bonne présentation" },
+      { critereId: "C012", note: 4, commentaire: "Respect des valeurs" },
+    ],
+    commentaireGeneral: "Agent fiable et consciencieux.",
+    status: "completee",
+  },
+]
+
+// Statistiques par section pour le tableau de bord
+export const statistiquesSections: StatistiquesSection[] = [
+  {
+    section: 1,
+    titre: "Compétences techniques",
+    scoreMoyen: 3.7,
+    progression: 5,
+    nombreEvaluations: 25,
+  },
+  {
+    section: 2,
+    titre: "Compétences comportementales",
+    scoreMoyen: 4.1,
+    progression: 8,
+    nombreEvaluations: 25,
+  },
+  {
+    section: 3,
+    titre: "Performance opérationnelle",
+    scoreMoyen: 3.5,
+    progression: -2,
+    nombreEvaluations: 25,
+  },
+  {
+    section: 4,
+    titre: "Attitude professionnelle",
+    scoreMoyen: 4.3,
+    progression: 3,
+    nombreEvaluations: 25,
+  },
+]
+
+// Statistiques par agent pour le tableau de bord
+export const statistiquesAgents: StatistiquesAgent[] = [
+  {
+    agentId: "A001",
+    nom: "Dupont",
+    prenom: "Jean",
+    scoreGlobal: 4.2,
+    scoresParSection: [
+      { section: 1, score: 3.7 },
+      { section: 2, score: 4.7 },
+      { section: 3, score: 3.7 },
+      { section: 4, score: 4.7 },
+    ],
+    tendance: "hausse",
+    derniereEvaluation: "2023-10-15",
+  },
+  {
+    agentId: "A002",
+    nom: "Martin",
+    prenom: "Sophie",
+    scoreGlobal: 3.6,
+    scoresParSection: [
+      { section: 1, score: 3.3 },
+      { section: 2, score: 3.7 },
+      { section: 3, score: 3.3 },
+      { section: 4, score: 4.0 },
+    ],
+    tendance: "stable",
+    derniereEvaluation: "2023-10-18",
+  },
+  {
+    agentId: "A003",
+    nom: "Petit",
+    prenom: "Thomas",
+    scoreGlobal: 4.8,
+    scoresParSection: [
+      { section: 1, score: 4.7 },
+      { section: 2, score: 5.0 },
+      { section: 3, score: 5.0 },
+      { section: 4, score: 4.7 },
+    ],
+    tendance: "hausse",
+    derniereEvaluation: "2023-10-20",
+  },
+  {
+    agentId: "A004",
+    nom: "Dubois",
+    prenom: "Marie",
+    scoreGlobal: 2.8,
+    scoresParSection: [
+      { section: 1, score: 2.3 },
+      { section: 2, score: 2.7 },
+      { section: 3, score: 2.3 },
+      { section: 4, score: 3.7 },
+    ],
+    tendance: "baisse",
+    derniereEvaluation: "2023-10-22",
+  },
+  {
+    agentId: "A005",
+    nom: "Leroy",
+    prenom: "Lucas",
+    scoreGlobal: 3.8,
+    scoresParSection: [
+      { section: 1, score: 3.7 },
+      { section: 2, score: 3.7 },
+      { section: 3, score: 3.3 },
+      { section: 4, score: 4.3 },
+    ],
+    tendance: "hausse",
+    derniereEvaluation: "2023-10-25",
+  },
+]
+

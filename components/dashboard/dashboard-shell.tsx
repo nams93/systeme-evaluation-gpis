@@ -1,12 +1,17 @@
-import type React from "react"
-interface DashboardShellProps {
-  children: React.ReactNode
-}
+"use client"
 
-export function DashboardShell({ children }: DashboardShellProps) {
+import type React from "react"
+import { DashboardNav } from "./dashboard-nav"
+
+export function DashboardShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="grid gap-8">{children}</div>
+    <div className="flex min-h-screen flex-col">
+      <div className="container flex-1 items-start md:grid md:grid-cols-[220px_1fr] md:gap-6 lg:grid-cols-[240px_1fr] lg:gap-10 py-8">
+        <aside className="fixed top-14 z-30 -ml-2 hidden h-[calc(100vh-3.5rem)] w-full shrink-0 md:sticky md:block">
+          <DashboardNav />
+        </aside>
+        <main className="flex w-full flex-col overflow-hidden">{children}</main>
+      </div>
     </div>
   )
 }
