@@ -8,7 +8,7 @@ export default function LoginPage() {
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage:
-            'url("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/GPIS%203.jpg-w2yhekAP9cYW1Nt0hrobJlRpYRkTLY.jpeg")',
+            'url("https://hebbkx1anhila5yf.public.blob.vercel-storage.com/GPISB-WGVW7u3bG7sEMjl854FakOhiek4UEw.jpeg")',
           backgroundPosition: "center",
         }}
       >
@@ -18,8 +18,8 @@ export default function LoginPage() {
 
       <div className="relative z-10 w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">DIROPS</h1>
-          <p className="text-white/80 mt-2">Système d'Évaluation des Agents GPIS</p>
+          <h1 className="text-4xl font-bold text-white">DIROPS</h1>
+          <p className="text-white/80 mt-2 text-xl">Système d'Évaluation des Agents GPIS</p>
         </div>
 
         <AuthForm />

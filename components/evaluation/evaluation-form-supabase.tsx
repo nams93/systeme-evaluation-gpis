@@ -12,7 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "@/hooks/use-toast"
 import { Loader2 } from "lucide-react"
-import Image from "next/image"
 
 // Options pour les sections (sans VAP)
 const sections = [
@@ -259,23 +258,22 @@ export function EvaluationFormSupabase() {
   }
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
-      {/* Logo en fond */}
-      <div className="fixed inset-0 pointer-events-none opacity-5">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Image
-            src="https://hebbkx1anhila5yf.public.blob.vercel-storage.com/gpis%20logo-3CN950QASZlrWyQ0Ba0TNhX432bUV7.png"
-            alt="GPIS Logo"
-            width={400}
-            height={400}
-            className="max-w-full h-auto"
-          />
-        </div>
+    <div className="relative min-h-screen bg-gradient-to-br from-blue-800 via-blue-600 to-blue-900">
+      {/* Motif de fond */}
+      <div className="absolute inset-0 z-0 opacity-10">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `radial-gradient(circle at 25px 25px, rgba(255, 255, 255, 0.2) 2%, transparent 0%), 
+                            radial-gradient(circle at 75px 75px, rgba(255, 255, 255, 0.2) 2%, transparent 0%)`,
+            backgroundSize: "100px 100px",
+          }}
+        ></div>
       </div>
 
       <form onSubmit={handleSubmit} className="relative z-10 p-4">
         <Card className="shadow-lg">
-          <CardHeader className="bg-gradient-to-r from-blue-600 to-blue-700 text-white">
+          <CardHeader className="bg-gradient-to-r from-blue-700 to-blue-900 text-white">
             <CardTitle>Formulaire d'évaluation GPIS</CardTitle>
           </CardHeader>
           <CardContent className="space-y-6 pt-6">
