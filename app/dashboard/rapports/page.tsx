@@ -1,14 +1,17 @@
-import { DashboardShell } from "@/components/dashboard/dashboard-shell"
+import { Suspense } from "react"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
+import { DashboardShell } from "@/components/dashboard/dashboard-shell"
+import { EvaluationReports } from "@/components/dashboard/evaluation-reports"
+import { Skeleton } from "@/components/ui/skeleton"
 
-export default function RapportsPage() {
+export default function ReportsPage() {
   return (
     <DashboardShell>
-      <DashboardHeader heading="Rapports" text="Générez et consultez les rapports d'évaluation" />
-      <div className="rounded-md border p-8 text-center">
-        <h2 className="text-lg font-medium">Rapports d'évaluation</h2>
-        <p className="text-sm text-muted-foreground mt-2">Cette page est en cours de développement.</p>
-      </div>
+      <DashboardHeader heading="Rapports d'évaluation" description="Générez et consultez les rapports d'évaluation" />
+
+      <Suspense fallback={<Skeleton className="h-[500px] w-full" />}>
+        <EvaluationReports />
+      </Suspense>
     </DashboardShell>
   )
 }

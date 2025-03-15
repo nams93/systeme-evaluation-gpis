@@ -1,14 +1,17 @@
-import { DashboardShell } from "@/components/dashboard/dashboard-shell"
+import { Suspense } from "react"
 import { DashboardHeader } from "@/components/dashboard/dashboard-header"
+import { DashboardShell } from "@/components/dashboard/dashboard-shell"
+import { AgentsList } from "@/components/dashboard/agents-list"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function AgentsPage() {
   return (
     <DashboardShell>
-      <DashboardHeader heading="Agents" text="Gérez les profils et les performances des agents GPIS" />
-      <div className="rounded-md border p-8 text-center">
-        <h2 className="text-lg font-medium">Liste des agents</h2>
-        <p className="text-sm text-muted-foreground mt-2">Cette page est en cours de développement.</p>
-      </div>
+      <DashboardHeader heading="Suivi des Agents" description="Visualisez les performances de tous les agents" />
+
+      <Suspense fallback={<Skeleton className="h-[500px] w-full" />}>
+        <AgentsList />
+      </Suspense>
     </DashboardShell>
   )
 }

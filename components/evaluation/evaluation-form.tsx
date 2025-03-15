@@ -1,242 +1,230 @@
 "use client"
 
-import type React from "react"
-
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { agents, evaluateurs, criteres } from "@/data/mock-data"
-import type { CritereEvaluation, NoteEvaluation } from "@/types/evaluation"
+import { criteresEvaluation } from "@/data/criteres-evaluation"
+import { RatingButtons } from "@/components/ui/rating-buttons"
+
+const sections = [
+  { value: "1", label: "Section 1" },
+  { value: "2", label: "Section 2" },
+  { value: "3", label: "Section 3" },
+  { value: "4", label: "Section 4" },
+]
+
+// Génération des indicatifs
+const generateIndicatifs = () => {
+  const indicatifs = []
+
+  // GOLF 01 à GOLF 20
+  for (let i = 1; i <= 20; i++) {
+    const num = i.toString().padStart(2, "0")
+    indicatifs.push({ value: `golf_${num}`, label: `GOLF ${num}` })
+  }
+
+  // CHARLY 01 à CHARLY 12
+  for (let i = 1; i <= 12; i++) {
+    const num = i.toString().padStart(2, "0")
+    indicatifs.push({ value: `charly_${num}`, label: `CHARLY ${num}` })
+  }
+
+  // ALPHA 01 à ALPHA 17
+  for (let i = 1; i <= 17; i++) {
+    const num = i.toString().padStart(2, "0")
+    indicatifs.push({ value: `alpha_${num}`, label: `ALPHA ${num}` })
+  }
+
+  // ECHO 01
+  indicatifs.push({ value: "echo_01", label: "ECHO 01" })
+
+  return indicatifs
+}
+
+const indicatifs = generateIndicatifs()
+
+const contextes = [
+  { value: "ronde", label: "RONDE" },
+  { value: "intervention", label: "INTERVENTION" },
+  { value: "ronde_ciblee", label: "RONDE CIBLEE" },
+  { value: "ronde_renforcee", label: "RONDE RENFORCEE" },
+  { value: "ronde_generale", label: "RONDE GENERALE" },
+  { value: "operation_securisation", label: "OPERATION DE SECURISATION" },
+  { value: "operation_conjointe", label: "OPERATION CONJOINTE / COORDONNEE" },
+  { value: "code_noir", label: "CODE NOIR" },
+  { value: "code_rouge", label: "CODE ROUGE" },
+  { value: "procedure_judiciaire", label: "PROCEDURE JUDICIAIRE" },
+  { value: "decouverte", label: "DECOUVERTE" },
+  { value: "assistance_secours", label: "ASSISTANCE SECOURS A VICTIME" },
+  { value: "incendie", label: "INCENDIE" },
+  { value: "autre", label: "AUTRE (PRECISER)" },
+]
 
 export function EvaluationForm() {
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState("section-1")
-  const [selectedAgent, setSelectedAgent] = useState("")
-  const [selectedEvaluateur, setSelectedEvaluateur] = useState("")
-  const [notes, setNotes] = useState<NoteEvaluation[]>([])
-  const [commentaireGeneral, setCommentaireGeneral] = useState("")
+  const [activeTab, setActiveTab] = useState("savoirs")
+  const [evaluations, setEvaluations] = useState<Record<string, number>>({})
+  const [observation, setObservation] = useState("")
+  const [contexte, setContexte] = useState("")
+  const [autreContexte, setAutreContexte] = useState("")
+  const [selectedIndicatif, setSelectedIndicatif] = useState("")
 
-  const handleNoteChange = (critereId: string, note: number) => {
-    setNotes((prev) => {
-      const existingIndex = prev.findIndex((n) => n.critereId === critereId)
-      if (existingIndex >= 0) {
-        const updated = [...prev]
-        updated[existingIndex] = { ...updated[existingIndex], note }
-        return updated
-      } else {
-        return [...prev, { critereId, note }]
-      }
-    })
+  const handleEvaluationChange = (critereId: string, value: number) => {
+    setEvaluations((prev) => ({
+      ...prev,
+      [critereId]: value,
+    }))
   }
 
-  const handleCommentaireChange = (critereId: string, commentaire: string) => {
-    setNotes((prev) => {
-      const existingIndex = prev.findIndex((n) => n.critereId === critereId)
-      if (existingIndex >= 0) {
-        const updated = [...prev]
-        updated[existingIndex] = { ...updated[existingIndex], commentaire }
-        return updated
-      } else {
-        return [...prev, { critereId, note: 0, commentaire }]
-      }
-    })
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Ici, vous enverriez normalement les données à votre API
-    console.log({
-      agentId: selectedAgent,
-      evaluateurId: selectedEvaluateur,
-      date: new Date().toISOString().split("T")[0],
-      notes,
-      commentaireGeneral,
-      status: "completee",
-    })
-
-    // Redirection vers le tableau de bord après soumission
-    router.push("/dashboard")
-  }
-
-  const getCriteresForSection = (section: number): CritereEvaluation[] => {
-    return criteres.filter((critere) => critere.section === section)
-  }
-
-  const getScoreForSection = (section: number): number => {
-    const sectionCriteres = getCriteresForSection(section)
-    const sectionNotes = notes.filter((note) => sectionCriteres.some((critere) => critere.id === note.critereId))
-
-    if (sectionNotes.length === 0) return 0
-
-    const sum = sectionNotes.reduce((acc, note) => acc + note.note, 0)
-    return sum / sectionNotes.length
-  }
-
-  const getTotalScore = (): number => {
-    if (notes.length === 0) return 0
-    const sum = notes.reduce((acc, note) => acc + note.note, 0)
-    return sum / notes.length
-  }
+  const CritereEvaluation = ({
+    id,
+    libelle,
+    description,
+  }: {
+    id: string
+    libelle: string
+    description: string
+  }) => (
+    <div className="space-y-2 pb-6">
+      <div className="flex justify-between items-start">
+        <div>
+          <Label className="text-base font-medium">{libelle}</Label>
+          <p className="text-sm text-muted-foreground">{description}</p>
+        </div>
+        <span className="text-sm font-medium">{evaluations[id] || "0"}/4</span>
+      </div>
+      <RatingButtons value={evaluations[id] || 0} onChange={(value) => handleEvaluationChange(id, value)} />
+      <div className="flex justify-between text-xs text-muted-foreground pt-1">
+        <span>Non observé</span>
+        <span>Exceptionnel</span>
+      </div>
+    </div>
+  )
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Informations générales</CardTitle>
-            <CardDescription>Sélectionnez l'agent à évaluer et l'évaluateur</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="agent">Agent</Label>
-                <Select value={selectedAgent} onValueChange={setSelectedAgent}>
-                  <SelectTrigger id="agent">
-                    <SelectValue placeholder="Sélectionner un agent" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {agents.map((agent) => (
-                      <SelectItem key={agent.id} value={agent.id}>
-                        {agent.prenom} {agent.nom} ({agent.matricule})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="evaluateur">Évaluateur</Label>
-                <Select value={selectedEvaluateur} onValueChange={setSelectedEvaluateur}>
-                  <SelectTrigger id="evaluateur">
-                    <SelectValue placeholder="Sélectionner un évaluateur" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {evaluateurs.map((evaluateur) => (
-                      <SelectItem key={evaluateur.id} value={evaluateur.id}>
-                        {evaluateur.prenom} {evaluateur.nom} ({evaluateur.fonction})
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="date">Date d'évaluation</Label>
-                <Input id="date" type="date" value={new Date().toISOString().split("T")[0]} disabled />
-              </div>
+    <form className="space-y-8">
+      <Card>
+        <CardHeader>
+          <CardTitle>Formulaire d'évaluation</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {/* Informations générales */}
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="date">Date</Label>
+              <Input type="date" id="date" />
             </div>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Évaluation par section</CardTitle>
-            <CardDescription>Évaluez l'agent sur chaque critère (1-5)</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="grid grid-cols-4 mb-4">
-                <TabsTrigger value="section-1">Section 1</TabsTrigger>
-                <TabsTrigger value="section-2">Section 2</TabsTrigger>
-                <TabsTrigger value="section-3">Section 3</TabsTrigger>
-                <TabsTrigger value="section-4">Section 4</TabsTrigger>
-              </TabsList>
-
-              {[1, 2, 3, 4].map((section) => (
-                <TabsContent key={section} value={`section-${section}`}>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                      <h3 className="text-lg font-medium">
-                        Section {section}:{" "}
-                        {section === 1
-                          ? "Compétences techniques"
-                          : section === 2
-                            ? "Compétences comportementales"
-                            : section === 3
-                              ? "Performance opérationnelle"
-                              : "Attitude professionnelle"}
-                      </h3>
-                      <div className="text-sm">
-                        Score moyen: <span className="font-bold">{getScoreForSection(section).toFixed(1)}/5</span>
-                      </div>
-                    </div>
-
-                    {getCriteresForSection(section).map((critere) => (
-                      <div key={critere.id} className="border rounded-md p-4 space-y-3">
-                        <div className="flex justify-between">
-                          <div>
-                            <h4 className="font-medium">{critere.libelle}</h4>
-                            <p className="text-sm text-muted-foreground">{critere.description}</p>
-                          </div>
-                          <div className="flex items-center space-x-1">
-                            {[1, 2, 3, 4, 5].map((value) => (
-                              <Button
-                                key={value}
-                                type="button"
-                                variant={
-                                  notes.find((n) => n.critereId === critere.id)?.note === value ? "default" : "outline"
-                                }
-                                size="sm"
-                                className="w-8 h-8 p-0"
-                                onClick={() => handleNoteChange(critere.id, value)}
-                              >
-                                {value}
-                              </Button>
-                            ))}
-                          </div>
-                        </div>
-
-                        <div>
-                          <Label htmlFor={`commentaire-${critere.id}`}>Commentaire</Label>
-                          <Textarea
-                            id={`commentaire-${critere.id}`}
-                            placeholder="Ajouter un commentaire (optionnel)"
-                            value={notes.find((n) => n.critereId === critere.id)?.commentaire || ""}
-                            onChange={(e) => handleCommentaireChange(critere.id, e.target.value)}
-                            className="mt-1"
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Commentaire général</CardTitle>
-            <CardDescription>Ajoutez un commentaire général sur la performance de l'agent</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Textarea
-              placeholder="Commentaire général sur la performance de l'agent..."
-              value={commentaireGeneral}
-              onChange={(e) => setCommentaireGeneral(e.target.value)}
-              className="min-h-[100px]"
-            />
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <div className="text-lg">
-              Score global: <span className="font-bold">{getTotalScore().toFixed(1)}/5</span>
+            <div className="space-y-2">
+              <Label htmlFor="agent">Agent évalué</Label>
+              <Input id="agent" />
             </div>
-            <div className="space-x-2">
-              <Button variant="outline" type="button" onClick={() => router.push("/dashboard")}>
-                Annuler
-              </Button>
-              <Button type="submit">Soumettre l'évaluation</Button>
+          </div>
+
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label htmlFor="section">Section</Label>
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une section" />
+                </SelectTrigger>
+                <SelectContent>
+                  {sections.map((section) => (
+                    <SelectItem key={section.value} value={section.value}>
+                      {section.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </CardFooter>
-        </Card>
-      </div>
+            <div className="space-y-2">
+              <Label htmlFor="matricule">Matricule</Label>
+              <Input id="matricule" />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="indicatif">Indicatif de l'évaluateur</Label>
+            <Select value={selectedIndicatif} onValueChange={setSelectedIndicatif}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un indicatif" />
+              </SelectTrigger>
+              <SelectContent>
+                {indicatifs.map((indicatif) => (
+                  <SelectItem key={indicatif.value} value={indicatif.value}>
+                    {indicatif.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="contexte">Contexte</Label>
+            <Select value={contexte} onValueChange={setContexte}>
+              <SelectTrigger>
+                <SelectValue placeholder="Sélectionner un contexte" />
+              </SelectTrigger>
+              <SelectContent>
+                {contextes.map((ctx) => (
+                  <SelectItem key={ctx.value} value={ctx.value}>
+                    {ctx.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {contexte === "autre" && (
+              <Input
+                className="mt-2"
+                placeholder="Précisez le contexte"
+                value={autreContexte}
+                onChange={(e) => setAutreContexte(e.target.value)}
+              />
+            )}
+          </div>
+
+          {/* Critères d'évaluation */}
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="savoirs">Savoirs et Connaissances</TabsTrigger>
+              <TabsTrigger value="savoirsFaire">Savoirs-Faire</TabsTrigger>
+              <TabsTrigger value="savoirsEtre">Savoirs-Être</TabsTrigger>
+            </TabsList>
+
+            {["savoirs", "savoirsFaire", "savoirsEtre"].map((categorie) => (
+              <TabsContent key={categorie} value={categorie} className="space-y-6">
+                {criteresEvaluation
+                  .filter((critere) => critere.categorie === categorie)
+                  .map((critere) => (
+                    <CritereEvaluation
+                      key={critere.id}
+                      id={critere.id}
+                      libelle={critere.libelle}
+                      description={critere.description}
+                    />
+                  ))}
+                <div className="space-y-2">
+                  <Label htmlFor={`observation-${categorie}`}>Observation générale</Label>
+                  <Textarea
+                    id={`observation-${categorie}`}
+                    placeholder="Ajoutez des remarques..."
+                    value={observation}
+                    onChange={(e) => setObservation(e.target.value)}
+                    className="min-h-[100px]"
+                  />
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </CardContent>
+        <CardFooter className="flex justify-end space-x-2">
+          <Button variant="outline">Annuler</Button>
+          <Button>Enregistrer l'évaluation</Button>
+        </CardFooter>
+      </Card>
     </form>
   )
 }

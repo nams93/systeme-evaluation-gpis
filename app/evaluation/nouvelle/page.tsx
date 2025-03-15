@@ -1,13 +1,11 @@
-import { DashboardShell } from "@/components/dashboard/dashboard-shell"
-import { DashboardHeader } from "@/components/dashboard/dashboard-header"
-import { EvaluationForm } from "@/components/evaluation/evaluation-form"
+import { EvaluationFormSupabase } from "@/components/evaluation/evaluation-form-supabase"
 
-export default function NouvellePage() {
+export default function NouvelleEvaluationPage() {
   return (
-    <DashboardShell>
-      <DashboardHeader heading="Nouvelle Évaluation" text="Créez une nouvelle évaluation pour un agent GPIS" />
-      <EvaluationForm />
-    </DashboardShell>
+    <div className="container mx-auto py-8">
+      <h1 className="text-3xl font-bold mb-8">Nouvelle évaluation</h1>
+      <EvaluationFormSupabase />
+    </div>
   )
 }
 
